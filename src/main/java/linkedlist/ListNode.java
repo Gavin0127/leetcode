@@ -1,0 +1,36 @@
+package linkedlist;
+
+import java.util.Objects;
+
+/**
+ * @author : Ge Xiantao
+ * @date : 2019/2/20 10:57
+ */
+public class ListNode {
+
+    int val;
+
+    ListNode next;
+
+    public ListNode(int val) {
+        this.val = val;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ListNode listNode = (ListNode) o;
+        return val == listNode.val &&
+               Objects.equals(next, listNode.next);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(val, next);
+    }
+}
