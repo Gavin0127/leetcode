@@ -4,17 +4,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 确定有限状态机
- * 最短匹配
+ * 完全匹配
  * @author : Ge Xiantao
- * @date : 2019/3/7 16:11
+ * @date : 2019/3/8 16:47
  */
-public class DFAFilter {
+public class DFAFilterTotal {
 
     private TrieNode root = new TrieNode();
 
     public static void main(String[] args) {
-        DFAFilter DFA = new DFAFilter();
+        DFAFilterTotal DFA = new DFAFilterTotal();
         Set<String> dirtyWords = new HashSet<>();
         dirtyWords.add("日本人");
         dirtyWords.add("人类");
@@ -55,31 +54,26 @@ public class DFAFilter {
     }
 
     /**
-     * 最短匹配
+     * 完全匹配
+     *
      * @param source
      * @param startIndex
      * @param results
      * @param rootNode
      */
     private void doFilter(char[] source, int startIndex,
-                                     Set<MatchedResult> results,
-                        TrieNode rootNode) {
+                          Set<MatchedResult> results,
+                          TrieNode rootNode) {
         TrieNode node = rootNode;
-        boolean lastEnd = false;
         for (int index = startIndex; index < source.length; index++) {
             node = node.findNode(source[index]);
             if (node != null && node.getDirtyWord() != null &&
                 node.getDirtyWord().length() > 0) {
                 results.add(
                         MatchedResult.valueOf(startIndex, node.getDirtyWord()));
-                lastEnd = true;
             }
             if (node == null) {
-                if (lastEnd) {
-                    doFilter(source, index, results, rootNode);
-                } else {
-                    doFilter(source, ++index, results, rootNode);
-                }
+                doFilter(source, ++startIndex, results, rootNode);
                 break;
             }
         }
