@@ -1,6 +1,5 @@
 package trie.ac;
 
-import trie.DFAFilter;
 import trie.MatchedResult;
 
 import java.util.HashSet;
@@ -20,12 +19,13 @@ public class ACFilter {
         ACFilter acFilter = new ACFilter();
         Set<String> dirtyWords = new HashSet<>();
         dirtyWords.add("日本人");
+        dirtyWords.add("人类");
         dirtyWords.add("日本鬼子");
         dirtyWords.add("日本柜子");
         dirtyWords.add("共产党");
         dirtyWords.add("毛泽东");
         acFilter.init(dirtyWords);
-        String source = "日本人中的日本鬼子是被毛泽东带领的共产党打败的";
+        String source = "日本人类中的日本鬼子是被毛泽东带领的共产党打败的";
         Set<MatchedResult> matchedResults = acFilter.filter(source);
         for (MatchedResult result : matchedResults) {
             System.out.println("startIndex: " + result.getStartIndex() + " " +
@@ -92,30 +92,32 @@ public class ACFilter {
     public Set<MatchedResult> filter(String source) {
         Set<MatchedResult> results = new HashSet<>();
         char[] chars = source.toCharArray();
-        doFilter(chars, 0, results, this.root);
+        doFilter(chars, results, this.root);
         return results;
     }
 
-    private void doFilter(char[] source, int startIndex,
-                          Set<MatchedResult> results,
+    private void doFilter(char[] source, Set<MatchedResult> results,
                           ACNode rootNode) {
-        int start = startIndex;
-        ACNode pNode = rootNode;
-        ACNode cNode;
-        for (int i = startIndex; i < source.length; i++) {
-            cNode = pNode.findNode(source[i]);
-            if (cNode != null && cNode.getDirtyWord() != null &&
-                cNode.getDirtyWord().length() > 0) {
-                results.add(MatchedResult.valueOf(start, cNode.getDirtyWord()));
-                start = i + 1;
+        int len = source.length;
+        ACNode p = rootNode;
+        for (int i = 0; i < len; i++) {
+            while (p.findNode(source[i]) == null && p != rootNode) {
+                p = p.getFail();
             }
-            if (cNode == null) {
-                if (pNode != this.root) {
-                    doFilter(source, i, results, pNode.getFail());
+            p = p.findNode(source[i]);
+            if (p == null) {
+                p = rootNode;
+            }
+            ACNode tem = p;
+            while (tem != rootNode) {
+                if (tem.getDirtyWord() != null &&
+                    tem.getDirtyWord().length() > 0) {
+                    int startIndex = i - tem.getDirtyWord().length() + 1;
+                    results.add(MatchedResult.valueOf(startIndex,
+                                                      tem.getDirtyWord()));
                 }
-                break;
+                tem = tem.getFail();
             }
-            pNode = cNode;
         }
     }
 
