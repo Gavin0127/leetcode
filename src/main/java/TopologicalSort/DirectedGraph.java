@@ -1,20 +1,17 @@
-package graph;
+package TopologicalSort;
 
 import java.util.LinkedList;
 
 /**
  * @author : Ge Xiantao
- * @date : 2019/3/4 15:33
+ * @date : 2019/3/15 10:36
  */
-public class Graph {
-    /**
-     * 顶点的个数
-     */
-    private int v;
+public class DirectedGraph {
 
+    private int v;
     private LinkedList<Integer>[] adj;
 
-    public Graph(int v) {
+    public DirectedGraph(int v) {
         this.v = v;
         adj = new LinkedList[v];
         for (int i = 0; i < v; i++) {
@@ -24,7 +21,13 @@ public class Graph {
 
     public void addEdge(int s, int t) {
         adj[s].add(t);
-        adj[t].add(s);
     }
 
+    public int getV() {
+        return v;
+    }
+
+    public LinkedList<Integer>[] getAdj() {
+        return adj;
+    }
 }
